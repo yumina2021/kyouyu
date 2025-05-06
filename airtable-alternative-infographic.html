@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtable代替ツール比較：グラフィックレコード</title>
+    <style>
+        :root {
+            --primary: #4A6FA5;
+            --secondary: #6994D0;
+            --accent: #FF6B6B;
+            --light: #F8F9FA;
+            --dark: #343A40;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+        
+        .two-column {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        
+        .column {
+            flex: 1;
+            padding: 0 15px;
+            min-width: 300px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-top: 5px solid var(--primary);
+        }
+        
+        .card-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-subtitle {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card {
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-card h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tool-icon {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light);
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+        
+        .feature-list li {
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .baserow {
+            border-color: #6994D0;
+            background-color: rgba(105, 148, 208, 0.05);
+        }
+        
+        .baserow .tool-icon {
+            background-color: #6994D0;
+        }
+        
+        .nocodb {
+            border-color: #8e44ad;
+            background-color: rgba(142, 68, 173, 0.05);
+        }
+        
+        .nocodb .tool-icon {
+            background-color: #8e44ad;
+        }
+        
+        .grist {
+            border-color: #2ecc71;
+            background-color: rgba(46, 204, 113, 0.05);
+        }
+        
+        .grist .tool-icon {
+            background-color: #2ecc71;
+        }
+        
+        .exment {
+            border-color: #e74c3c;
+            background-color: rgba(231, 76, 60, 0.05);
+        }
+        
+        .exment .tool-icon {
+            background-color: #e74c3c;
+        }
+        
+        .pleasanter {
+            border-color: #f39c12;
+            background-color: rgba(243, 156, 18, 0.05);
+        }
+        
+        .pleasanter .tool-icon {
+            background-color: #f39c12;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+            text-align: center;
+        }
+        
+        .comparison-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #f1f3f5;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 7px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 10px;
+            color: white;
+            background-color: var(--gray);
+            margin-right: 5px;
+        }
+        
+        .badge-free {
+            background-color: var(--success);
+        }
+        
+        .badge-paid {
+            background-color: var(--warning);
+        }
+        
+        .badge-selfhost {
+            background-color: var(--info);
+        }
+        
+        .badge-cloud {
+            background-color: var(--secondary);
+        }
+        
+        .badge-japan {
+            background-color: #e74c3c;
+        }
+        
+        .use-case {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: var(--gray);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #000;
+            cursor: help;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .callout {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #e9f5fe;
+            border-left: 5px solid var(--info);
+        }
+        
+        .callout-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--info);
+        }
+        
+        .integration-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .integration-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ddd;
+            border-radius: 5px;
+            font-size: 20px;
+        }
+        
+        .integration-details {
+            flex: 1;
+        }
+        
+        .integration-title {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .integration-description {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .user-limits {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .user-limits-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .user-limit-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-comparison {
+            margin-top: 20px;
+        }
+
+        .feature-row {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .feature-name {
+            flex: 2;
+            font-weight: bold;
+        }
+
+        .feature-support {
+            flex: 1;
+            text-align: center;
+        }
+
+        .yes {
+            color: var(--success);
+        }
+
+        .partial {
+            color: var(--warning);
+        }
+
+        .no {
+            color: var(--danger);
+        }
+        
+        @media (max-width: 768px) {
+            .column {
+                flex: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Airtable代替ツール比較</h1>
+            <p class="subtitle">ノーコードでデータベースを簡単に作成・管理できるツールを徹底比較</p>
+        </header>
+        
+        <div class="two-column">
+            <div class="column">
+                <div class="card">
+                    <h2 class="card-title">Airtable代替ツールの特徴</h2>
+                    <p>Airtableが高い、英語が不安、既存のDBを活用したい——そんなときは、以下のオープンソースノーコードデータベース管理ツールが便利です。用途や規模、サポート体制、言語対応などで最適なものを選びましょう。</p>
+                    
+                    <div class="tool-card baserow">
+                        <h3>
+                            <span class="tool-icon">B</span>
+                            Baserow
+                        </h3>
+                        <span class="badge badge-free">無料</span>
+                        <span class="badge badge-paid">有料プランあり</span>
+                        <span class="badge badge-selfhost">セルフホスト可</span>
+                        <span class="badge badge-cloud">クラウド版あり</span>
+                        <ul class="feature-list">
+                            <li>ノーコードで使えるオープンソースWebデータベース</li>
+                            <li>Excelのような操作感で、直感的にテーブル作成・管理が可能</li>
+                            <li>クラウド版とセルフホスト版（自社サーバー設置）が選べる</li>
+                            <li>API連携や自動化サービスとの連携も得意</li>
+                            <li>Airtableより安価で、導入コストを抑えたい場合におすすめ</li>
+                        </ul>
+                        <div class="user-limits">
+                            <div class="user-limits-title">無料プランの制限</div>
+                            <div class="user-limit-item">
+                                <span>ユーザー数上限</span>
+                                <span>無制限</span>
+                            </div>
+                            <div class="user-limit-item">
+                                <span>レコード数上限</span>
+                                <span>クラウド版: 3,000件、セルフホスト: 無制限</span>
+                            </div>
+                            <div class="user-limit-item">
+                                <span>容量上限</span>
+                                <span>クラウド版: 2GB、セルフホスト: サーバー容量次第</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-card nocodb">
+                        <h3>
+                            <span class="tool-icon">N</span>
+                            NocoDB
+                        </h3>
+                        <span class="badge badge-free">無料</span>
+                        <span class="badge badge-selfhost">セルフホスト可</span>
+                        <ul class="feature-list">
+                            <li>既存のMySQLやPostgreSQLなどの<span class="tooltip">RDB<span class="tooltip-text">リレーショナルデータベース：関連するデータ同士を紐付けて管理するデータベース</span></span>をノーコード管理画面に変換</li>
+                            <li>カンバン表示やフォーム作成など多彩なビューに対応</li>
+                            <li>外部サービスやAPI連携が豊富</li>
+                            <li>オープンソースで無料、セルフホストも容易</li>
+                            <li>既存DBを活用したい場合や、柔軟な運用をしたい場合に最適</li>
+                        </ul>
+                        <div class="user-limits">
+                            <div class="user-limits-title">無料プランの制限</div>
+                            <div class="user-limit-item">
+                                <span>ユーザー数上限</span>
+                                <span>無制限（サーバー性能次第）</span>
+                            </div>
+                            <div class="user-limit-item">
+                                <span>レコード数上限</span>
+                                <span>無制限（サーバー性能次第）</span>
+                            </div>
+                            <div class="user-limit-item">
+                                <span>容量上限</span>
+                                <span>サーバー容量次第</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-card grist">
+                        <h3>
+                            <span class="tool-icon">G</span>
+                            Grist
+                        </h3>
+                        <span class="badge badge-free">無料</span>
+                        <span class="badge badge-paid">有料プランあり</span>
+                        <span class="badge badge-selfhost">セルフホスト可</span>
+                        <span class="badge badge-cloud">クラウド版あり</span>
+                        <ul class="feature-list">
+                            <li>表計算とリレーショナルDBの両方の良さを持つ</li>
+                            <li>データの柔軟な結合や、詳細なアクセス権限管理が可能</li>
+                            <li>クラウドとセルフホストの両対応</li>
+                            <li>Pythonでのカスタム計算や自動化もできる</li>
+                            <li>レポートやグラフ機能も充実しており、業務データ管理に強い</li>
+                        </ul>
+                        <div class="callout">
+                            <div class="callout-title">データベース対応情報</div>
+                            <p>Gristのセルフホストでは、SQLiteとPostgreSQLに対応しています。SQLiteはGoogleドライブに保存可能ですが、同時編集時のデータ破損リスクがあるため注意が必要です。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Slack連携・通知機能</h2>
+                    <p>各ツールのSlack連携機能を比較しました。通知機能はチーム作業の効率化に役立ちます。</p>
+                    
+                    <div class="integration-item">
+                        <div class="integration-icon">B</div>
+                        <div class="integration-details">
+                            <div class="integration-title">Baserow</div>
+                            <div class="integration-description">有料プランの機能としてSlack通知あり。無料プランでは制限あり。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="integration-item">
+                        <div class="integration-icon">N</div>
+                        <div class="integration-details">
+                            <div class="integration-title">NocoDB</div>
+                            <div class="integration-description">Slack通知機能あり。Webhookを通じた連携が可能。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="integration-item">
+                        <div class="integration-icon">G</div>
+                        <div class="integration-details">
+                            <div class="integration-title">Grist</div>
+                            <div class="integration-description">標準機能ではなし。APIとZapier/n8nなどの外部連携サービスを通じて実現可能。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="integration-item">
+                        <div class="integration-icon">P</div>
+                        <div class="integration-details">
+                            <div class="integration-title">プリザンター</div>
+                            <div class="integration-description">標準機能としてSlack通知機能あり。設定も簡単。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="column">
+                <div class="card">
+                    <h2 class="card-title">国産ツールの強み</h2>
+                    
+                    <div class="tool-card exment">
+                        <h3>
+                            <span class="tool-icon">E</span>
+                            Exment（エクスメント）
+                        </h3>
+                        <span class="badge badge-free">無料</span>
+                        <span class="badge badge-selfhost">セルフホスト可</span>
+                        <span class="badge badge-japan">日本製</span>
+                        <ul class="feature-list">
+                            <li>日本発のオープンソースWebデータベース</li>
+                            <li>PHP＋MySQLで動作し、レンタルサーバーにも簡単に導入可能</li>
+                            <li>帳票出力、通知、権限管理、テンプレートなど業務向け機能が豊富</li>
+                            <li>完全オンプレミス運用にも対応し、セキュリティ重視の現場にも最適</li>
+                            <li>日本語サポートが充実しており、導入や運用のハードルが低い</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tool-card pleasanter">
+                        <h3>
+                            <span class="tool-icon">P</span>
+                            プリザンター
+                        </h3>
+                        <span class="badge badge-free">無料</span>
+                        <span class="badge badge-paid">有料プランあり</span>
+                        <span class="badge badge-selfhost">セルフホスト可</span>
+                        <span class="badge badge-cloud">クラウド版あり</span>
+                        <span class="badge badge-japan">日本製</span>
+                        <ul class="feature-list">
+                            <li>国産オープンソースのノーコード業務アプリ構築ツール</li>
+                            <li>Excelの課題（同時編集不可、情報の分散など）を解決</li>
+                            <li>コメントやメッセージ送信、全文検索など多機能</li>
+                            <li>Microsoft系サーバーとの親和性が高い</li>
+                            <li>日本語サポート・コミュニティが充実し、国内利用に安心</li>
+                        </ul>
+                        <div class="user-limits">
+                            <div class="user-limits-title">無料プランの制限</div>
+                            <div class="user-limit-item">
+                                <span>ユーザー数上限</span>
+                                <span>クラウド版: 3ユーザーまで、セルフホスト: 無制限</span>
+                            </div>
+                            <div class="user-limit-item">
+                                <span>レコード数上限</span>
+                                <span>クラウド版: 500行まで</span>
+                            </div>
+                            <div class="user-limit-item">
+                                <span>料金目安</span>
+                                <span>ライトプラン(10ユーザー): 月額約1,100円(税込)</span>
+                            </div>
+                        </div>
+                        <div class="callout">
+                            <div class="callout-title">Microsoft Accessに近いツール</div>
+                            <p>プリザンターはMicrosoft Accessに最も近い機能・操作感を持ち、フォーム作成・帳票出力・リレーショナルDB構造などAccessの特徴をクラウドで再現しています。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">サーバー環境と対応</h2>
+                    
+                    <div class="callout">
+                        <div class="callout-title">ロリポップなどの共用レンタルサーバー対応</div>
+                        <p>一般的な共用レンタルサーバー（ロリポップなど）には、<span class="tooltip">PHP+MySQL環境<span class="tooltip-text">PHPはWebサイト構築用のプログラミング言語、MySQLはオープンソースのデータベース管理システム</span></span>が標準装備されていますが、Node.jsや.NETなどは通常利用できません。</p>
+                    </div>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>ツール名</th>
+                                <th>一般的な共用レンタルサーバー対応</th>
+                                <th>推奨環境</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Baserow</td>
+                                <td class="no">×</td>
+                                <td>VPS、クラウドサーバー、Docker</td>
+                            </tr>
+                            <tr>
+                                <td>NocoDB</td>
+                                <td class="no">×</td>
+                                <td>Node.js対応サーバー、VPS、Docker</td>
+                            </tr>
+                            <tr>
+                                <td>Grist</td>
+                                <td class="no">×</td>
+                                <td>VPS、クラウドサーバー、Docker</td>
+                            </tr>
+                            <tr>
+                                <td>Exment</td>
+                                <td class="yes">○</td>
+                                <td>PHP+MySQL対応サーバー</td>
+                            </tr>
+                            <tr>
+                                <td>プリザンター</td>
+                                <td class="no">×</td>
+                                <td>.NET対応サーバー、Windows Server</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>一般的な共用レンタルサーバーで使いたい場合は、PHP+MySQL環境で動作する「Exment」が最適です。他のツールはVPSやクラウドサーバーなど、より自由度の高い環境が必要です。</p>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">無料で使えるセキュリティ重視のツール</h2>
+                    
+                    <div class="feature-comparison">
+                        <div class="feature-row">
+                            <div class="feature-name">ツール名</div>
+                            <div class="feature-support">アクセス権限管理</div>
+                            <div class="feature-support">自社サーバー運用</div>
+                            <div class="feature-support">日本語対応</div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-name">Baserow</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support partial">△</div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-name">NocoDB</div>
+                            <div class="feature-support partial">△</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support partial">△</div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-name">Grist</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support partial">△</div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-name">Exment</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support yes">○</div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="feature-name">プリザンター</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support yes">○</div>
+                            <div class="feature-support yes">○</div>
+                        </div>
+                    </div>
+                    
+                    <p>無料でかつセキュリティ重視の場合、Baserowとプリザンターがおすすめです。特に自社サーバーで運用する場合、データを外部に出さずに管理でき、プライバシーや機密性を高く保てます。</p>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">まとめ：最適なツール選び</h2>
+                    
+                    <p>以下のような基準で最適なツールを選ぶのがおすすめです：</p>
+                    <ul class="feature-list">
+                        <li>小規模チームでコスト重視ならBaserowやNocoDB</li>
+                        <li>既存のデータベースを活用したいならNocoDB</li>
+                        <li>表計算とデータベース
